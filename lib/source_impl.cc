@@ -56,6 +56,10 @@
 #include <uhd_source_c.h>
 #endif
 
+#ifdef ENABLE_IIO
+#include <plutosdr_source_c.h>
+#endif
+
 #ifdef ENABLE_MIRI
 #include <miri_source_c.h>
 #endif
@@ -144,6 +148,9 @@ source_impl::source_impl( const std::string &args )
 #ifdef ENABLE_UHD
   dev_types.push_back("uhd");
 #endif
+#ifdef ENABLE_IIO
+  dev_types.push_back("plutosdr");
+#endif
 #ifdef ENABLE_MIRI
   dev_types.push_back("miri");
 #endif
@@ -214,6 +221,10 @@ source_impl::source_impl( const std::string &args )
 #endif
 #ifdef ENABLE_UHD
     BOOST_FOREACH( std::string dev, uhd_source_c::get_devices() )
+      dev_list.push_back( dev );
+#endif
+#ifdef ENABLE_IIO
+    BOOST_FOREACH( std::string dev, plutosdr_source_c::get_devices() )
       dev_list.push_back( dev );
 #endif
 #ifdef ENABLE_MIRI
@@ -312,6 +323,13 @@ source_impl::source_impl( const std::string &args )
 #ifdef ENABLE_UHD
     if ( dict.count("uhd") ) {
       uhd_source_c_sptr src = make_uhd_source_c( arg );
+      block = src; iface = src.get();
+    }
+#endif
+
+#ifdef ENABLE_IIO
+    if ( dict.count("plutosdr") ) {
+      plutosdr_source_c_sptr src = make_plutosdr_source_c( arg );
       block = src; iface = src.get();
     }
 #endif
