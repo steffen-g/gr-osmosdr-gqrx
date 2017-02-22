@@ -243,6 +243,20 @@ std::string plutosdr_source_c::get_antenna( size_t chan )
   return "A_BALANCED";
 }
 
+double plutosdr_source_c::set_bandwidth( double bw, size_t chan )
+{
+  if (bw == 0.0)
+    bw = 0.8 * samplerate;  // auto bandwidth
+
+  bandwidth = (unsigned long)bw;
+  set_params();
+  return bandwidth;
+}
+
+double plutosdr_source_c::get_bandwidth( size_t chan )
+{
+  return bandwidth;
+}
 
 void plutosdr_source_c::set_params( void )
 {
