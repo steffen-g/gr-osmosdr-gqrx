@@ -42,7 +42,7 @@ plutosdr_source_c::plutosdr_source_c(const std::string &args) :
   //uri = "usb:6.29.5";
   frequency = 434000000;
   samplerate = 5000000;
-  decimation = 1;
+  decimation = 0;
   bandwidth = 4000000;
   ch1_en = ch2_en = true;
   ch3_en = ch4_en = false;
