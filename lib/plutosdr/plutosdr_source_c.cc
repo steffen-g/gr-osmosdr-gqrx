@@ -48,15 +48,15 @@ plutosdr_source_c::plutosdr_source_c(const std::string &args) :
   quadrature = true;
   rfdc = true;
   bbdc = true;
-  gain_mode = "manual";     // FIXME: slow_attack / fast_attack / hybrid
-  gain_value = 60;
+  gain_auto = false;
+  gain_value = 50;
   filter = "";
   filter_auto = true;
 
   _src = gr::iio::pluto_source::make(uri.c_str(), frequency, samplerate,
                                      decimation, bandwidth, buffer_size,
                                      quadrature, rfdc, bbdc,
-                                     gain_mode.c_str(), gain_value,
+                                     "manual", gain_value,
                                      filter.c_str(), filter_auto);
 
   connect( _src, 0, self(), 0 );
@@ -172,6 +172,18 @@ osmosdr::gain_range_t plutosdr_source_c::get_gain_range( const std::string & nam
   return range;
 }
 
+bool plutosdr_source_c::set_gain_mode( bool automatic, size_t chan )
+{
+  gain_auto = automatic;
+  set_params();
+
+  return automatic;
+}
+
+bool plutosdr_source_c::get_gain_mode( size_t chan )
+{
+  return gain_auto;
+}
 
 double plutosdr_source_c::set_gain( double gain, size_t chan )
 {
@@ -235,7 +247,8 @@ double plutosdr_source_c::get_bandwidth( size_t chan )
 
 void plutosdr_source_c::set_params( void )
 {
+  // FIXME: gain_mode string can be manual / slow_attack / fast_attack / hybrid
   _src->set_params( frequency, samplerate, bandwidth, quadrature, rfdc, bbdc,
-                    gain_mode.c_str(), gain_value,
+                    gain_auto ? "fast_attack" : "manual", gain_value,
                     filter.c_str(), filter_auto );
 }
