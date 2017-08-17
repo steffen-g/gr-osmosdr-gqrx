@@ -149,7 +149,7 @@ std::vector<std::string> plutosdr_source_c::get_gain_names( size_t chan )
 {
   std::vector< std::string > gains;
 
-  gains.push_back( "Gain" );
+  gains.push_back( "RF" );
 
   return gains;
 }
@@ -157,8 +157,7 @@ std::vector<std::string> plutosdr_source_c::get_gain_names( size_t chan )
 osmosdr::gain_range_t plutosdr_source_c::get_gain_range( size_t chan)
 {
   osmosdr::gain_range_t range;
-
-  range += osmosdr::range_t( 0, 100, 1 );     // FIXME: I have no idea...
+  range += osmosdr::range_t( -10, 77, 1 );   // https://wiki.analog.com/resources/tools-software/linux-drivers/iio-transceiver/ad9361#rx_gain_control
 
   return range;
 }
@@ -168,7 +167,7 @@ osmosdr::gain_range_t plutosdr_source_c::get_gain_range( const std::string & nam
 {
   osmosdr::gain_range_t range;
 
-  range += osmosdr::range_t( 0, 100, 1 );     // FIXME: I have no idea...
+  range += osmosdr::range_t( -10, 77, 1 );
 
   return range;
 }
