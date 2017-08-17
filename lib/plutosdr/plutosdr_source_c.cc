@@ -38,7 +38,9 @@ plutosdr_source_c::plutosdr_source_c(const std::string &args) :
                    gr::io_signature::make(0, 0, 0),
                    gr::io_signature::make(1, 1, sizeof(gr_complex)))
 {
-  uri = "ip:192.168.2.1";
+  uri = "";
+  // FIXME: should be in args
+  //uri = "ip:192.168.2.1";
   //uri = "usb:6.29.5";
   frequency = 434000000;
   samplerate = 2500000;
