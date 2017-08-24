@@ -23,7 +23,8 @@
 #include <gnuradio/blocks/float_to_complex.h>
 #include <gnuradio/blocks/short_to_float.h>
 #include <gnuradio/hier_block2.h>
-#include <gnuradio/iio/fmcomms2_source.h>
+//#include <gnuradio/iio/fmcomms2_source.h>
+#include <gnuradio/iio/pluto_source.h>
 
 #include "source_iface.h"
 
@@ -81,7 +82,7 @@ private:
 
   void set_params(void);
 
-  gr::iio::fmcomms2_source::sptr    _src;
+  gr::iio::pluto_source::sptr    _src;
   gr::blocks::short_to_float::sptr  _stofi;
   gr::blocks::short_to_float::sptr  _stofq;
   gr::blocks::float_to_complex::sptr    _ftc;

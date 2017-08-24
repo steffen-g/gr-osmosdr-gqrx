@@ -38,7 +38,8 @@ plutosdr_source_c::plutosdr_source_c(const std::string &args) :
                    gr::io_signature::make(0, 0, 0),
                    gr::io_signature::make(1, 1, sizeof(gr_complex)))
 {
-  uri = "ip:192.168.2.1";
+  //uri = "ip:192.168.2.1";
+  uri = "ip:pluto.local";
   //uri = "usb:6.29.5";
   frequency = 434000000;
   samplerate = 2500000;
@@ -46,33 +47,22 @@ plutosdr_source_c::plutosdr_source_c(const std::string &args) :
   bandwidth = 2000000;
   ch1_en = ch2_en = true;
   ch3_en = ch4_en = false;
-  buffer_size = 0x4000;
+  buffer_size = 1024*128;//0x4000;
   quadrature = true;
   rfdc = bbdc = true;
-  gain1_mode = "Fast";
+  //gain1_mode = "manual";
+  gain1_mode = "fast_attack";
   gain1_value = 64;
-  gain2_mode = "Fast";
-  gain2_value = 64;
   rf_port_select = "A_BALANCED";
   filter = "";
 
-  _src = gr::iio::fmcomms2_source::make(uri.c_str(), frequency, samplerate,
-                                        decimation, bandwidth,
-                                        ch1_en, ch2_en, ch3_en, ch4_en,
-                                        buffer_size, quadrature, rfdc, bbdc,
+  _src = gr::iio::pluto_source::make(uri.c_str(), frequency, samplerate,
+                                        decimation, bandwidth, buffer_size,
+                                        quadrature, rfdc, bbdc,
                                         gain1_mode.c_str(), gain1_value,
-                                        gain2_mode.c_str(), gain2_value,
-		                                rf_port_select.c_str(), filter.c_str());
+		                                filter.c_str());		                                
 
-  _stofi = gr::blocks::short_to_float::make(1, 32767.f);
-  _stofq = gr::blocks::short_to_float::make(1, 32767.f);
-  _ftc = gr::blocks::float_to_complex::make();
-
-  connect( _src, 0, _stofi, 0);
-  connect( _src, 1, _stofq, 0);
-  connect( _stofi, 0, _ftc, 0);
-  connect( _stofq, 0, _ftc, 1);
-  connect( _ftc, 0, self(), 0 );
+  connect( _src, 0, self(), 0 );
 }
 
 plutosdr_source_c::~plutosdr_source_c()
@@ -129,7 +119,7 @@ osmosdr::freq_range_t plutosdr_source_c::get_freq_range( size_t chan )
 {
   osmosdr::freq_range_t range;
 
-  range += osmosdr::range_t( 325.0e6, 3800.0e6, 1.0 );
+  range += osmosdr::range_t( 70.0e6, 6000.0e6, 1.0 );
 
   return range;
 }
@@ -172,7 +162,7 @@ osmosdr::gain_range_t plutosdr_source_c::get_gain_range( size_t chan)
 {
   osmosdr::gain_range_t range;
 
-  range += osmosdr::range_t( 0, 100, 1 );     // FIXME: I have no idea...
+  range += osmosdr::range_t( 0, 72, 1 );    
 
   return range;
 }
@@ -182,7 +172,7 @@ osmosdr::gain_range_t plutosdr_source_c::get_gain_range( const std::string & nam
 {
   osmosdr::gain_range_t range;
 
-  range += osmosdr::range_t( 0, 100, 1 );     // FIXME: I have no idea...
+  range += osmosdr::range_t( 0, 72, 1 );    
 
   return range;
 }
@@ -259,9 +249,8 @@ double plutosdr_source_c::get_bandwidth( size_t chan )
 }
 
 void plutosdr_source_c::set_params( void )
-{
+{                 
   _src->set_params( frequency, samplerate, bandwidth, quadrature, rfdc, bbdc,
                     gain1_mode.c_str(), gain1_value,
-                    gain2_mode.c_str(), gain2_value,
-                    rf_port_select.c_str() );
+                    filter.c_str());               
 }
